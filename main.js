@@ -1,24 +1,5 @@
-/*
-var myUser = 'admin';
-var myPass = '123';
 
-var inputUsername = document.getElementById('exampleInputEmail1');
-var inputPassword = document.getElementById('exampleInputPassword1');
-
-var btn = document.getElementById('login');
-
-btn.addEventListener('click', function() {
-    var userName = inputUsername.value;
-    var passWord = inputPassword.value;
-
-    if (userName == myUser && passWord == myPass) {
-        alert('Đăng nhập thành công');
-    } else {
-        alert('Đăng nhập thất bại!');
-    }
-});
-*/
-var users = [
+const users = [
 	{
 		id: 1,
 		name: 'Quý',
@@ -45,8 +26,18 @@ var users = [
 	}
 ];
 
-// localStorage.setItem('users', JSON.stringify(users));
-var users = JSON.parse(localStorage.getItem('users'));
+const userLocal = JSON.parse(localStorage.getItem('users'));
+
+if (localStorage.getItem('users') === null){
+	localStorage.setItem('users', JSON.stringify(users));
+	loadUser(users);
+	setLastUserId();
+} else {
+	loadUser(userLocal);
+	setLastUserIdLocal();
+}
+
+//Load user
 function loadUser(arrUser) {
 	let userEle = '';
 	arrUser.forEach(element => {
@@ -62,7 +53,9 @@ function loadUser(arrUser) {
 		  		data-bs-toggle="modal" 
 				data-bs-target="#modalUpdateUser"
 		  		data-bs-whatever="@mdo" 
-				onclick="editUser(${element['id']})">Sửa</button>
+				onclick="editUser(${element['id']})">
+					Sửa
+			</button>
 		</td>
 		<td>
 		  	<button type="button" 
@@ -70,7 +63,9 @@ function loadUser(arrUser) {
 				data-bs-toggle="modal" 
 				data-bs-target="#modalDelete"
 		  		data-bs-whatever="@mdo"  
-		  		onclick="deleteUser(${element['id']})">Xóa</button>
+		  		onclick="deleteUser(${element['id']})">
+				  	Xóa
+			</button>
 		</td>	
       </tr>`;
 	});
@@ -83,7 +78,6 @@ function loadUser(arrUser) {
 	// 	})
 	// }
 }
-loadUser(users);
 
 
 
@@ -121,13 +115,31 @@ function stringToSlug(str) {
 }
 
 
+// Update storage
+function updateUserStorage(users) {
+	localStorage.setItem('users', JSON.stringify(users));
+}
+// Get storage
+function getUserStorage() {
+	return JSON.parse(localStorage.getItem('users'));
+}
+
+// Get User by id
+function getUserById(uID) {
+	const users = getUserStorage();
+	return users.find(u => Number(u.id) === Number(uID)); //
+}
 
 // set last user id
 function setLastUserId() {
 	const lastUserId = users[users.length - 1].id + 1;
 	$("#id").val(lastUserId);
 }
-setLastUserId();
+
+function setLastUserIdLocal() {
+	const lastUserId = userLocal[userLocal.length - 1].id + 1;
+	$("#id").val(lastUserId);
+}
 
 // Reset value
 function resetForm() {
@@ -158,23 +170,6 @@ function addUser(){
 		resetForm()
 	}
 }
-
-// Update storage
-function updateUserStorage(_users) {
-	localStorage.setItem('users', JSON.stringify(_users));
-}
-
-// Get storage
-function getUserStorage() {
-	return JSON.parse(localStorage.getItem('users'));
-}
-
-// Get User by id
-function getUserById(uID) {
-	const users = getUserStorage();
-	return users.find(u => Number(u.id) === Number(uID)); //
-}
-
 
 //Modal delete
 // $('[data-action="btn-modal-delete"]').click(function(e){
